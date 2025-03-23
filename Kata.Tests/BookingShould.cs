@@ -138,7 +138,7 @@ public class BookingShould
         result.ShouldBeFalse();
     }
 
-    [Fact(Skip = "Not implemented yet")]
+    [Fact]
     public void Choose_boat_over_bar_when_available()
     {
         // Arrange

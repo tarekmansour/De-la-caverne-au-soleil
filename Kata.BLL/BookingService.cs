@@ -25,54 +25,55 @@ public class BookingService
     public bool ReserveBar()
     {
         //chercher des bars et des développeurs
-        var barsData = _barRepository.Get();
-        var devsData = _developerRepository.Get().ToList();
+        var bars = _barRepository.Get();
+        var boats = _boatRepository.Get();
+        var devs = _developerRepository.Get().ToList();
 
-        //chercher le nombre de développeurs disponible à une date
-        var numberOfAvailableDevsByDate = new Dictionary<DateTime, int>();
-        foreach (var dev in devsData)
+        var allBars = GetAllBars(bars, boats);
+        var availabilities = GetAvailabilities(devs);
+
+        var bestDate = BestDate.Get(availabilities, devs.Count);
+        var booking = Booking.Make(bestDate, allBars);
+
+        if (booking is not BookingNotFound)
         {
-            foreach (var date in dev.OnSite)
+            _bookingRepository.Save(new BookingData()
             {
-                if (numberOfAvailableDevsByDate.ContainsKey(date))
-                {
-                    numberOfAvailableDevsByDate[date]++;
-                }
-                else
-                {
-                    numberOfAvailableDevsByDate.Add(date, 1);
-                }
-            }
-        }
-
-        //prendre le nombre de développeurs maximum à un date donnée: reserver le bar quand le maximum de personnes est disponible
-        var maxNumberOfDevs = numberOfAvailableDevsByDate.Values.Max();
-
-        //régle à respecter: il faut au moins 60% des developpeurs qui soit disponible pour faire la reservation, sinon on reserve pas
-        if (maxNumberOfDevs <= devsData.Count() * 0.6)
-        {
-            return false;
-        }
-
-        var bestDate = numberOfAvailableDevsByDate.First(kv => kv.Value == maxNumberOfDevs).Key;
-
-        //chercher le bar qui a la capacité de recevori les dev et ouvert à une date
-        foreach (var bar in barsData)
-        {
-            if (bar.Capacity >= maxNumberOfDevs && bar.Open.Contains(bestDate.DayOfWeek))
-            {
-                //reserver le bar
-                BookBar(bar.Name, bestDate);
-                _bookingRepository.Save(new BookingData() { Bar = bar, Date = bestDate });
-                return true;
-            }
+                Bar = new BarData(booking.Bar.Name, booking.Bar.Capacity, booking.Bar.OpenDays),
+                Date = booking.Date
+            });
+            return true;
         }
 
         return false;
     }
 
-    private void BookBar(string name, DateTime dateTime)
+    private IEnumerable<Bar> GetAllBars(IEnumerable<BarData> bars, IEnumerable<BoatData> boats)
     {
-        Console.WriteLine("Bar booked: " + name + " at " + dateTime);
+        IEnumerable<Bar> allBars = bars
+            .Select(b => new Bar(b.Name, b.Capacity, b.Open, false))
+            .Concat(boats.Select(b => new Bar(b.Name, b.MaxPeople, Enum.GetValues<DayOfWeek>(), true)));
+
+        return allBars;
+    }
+
+    private List<DeveloperAvailability> GetAvailabilities(List<DeveloperData> devs)
+    {
+        var availabilities = new List<DeveloperAvailability>();
+        foreach (var date in devs.SelectMany(dev => dev.OnSite))
+        {
+            var devAvailability = availabilities.FirstOrDefault(availability => availability.Date == date);
+            if (devAvailability == null)
+            {
+                availabilities.Add(new DeveloperAvailability(date, 1));
+            }
+            else
+            {
+                var numberOfPeople = devAvailability.NumberOfPeople + 1;
+                availabilities.Remove(devAvailability);
+                availabilities.Add(new DeveloperAvailability(date, numberOfPeople));
+            }
+        }
+        return availabilities;
     }
 }
