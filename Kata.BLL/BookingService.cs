@@ -7,15 +7,18 @@ public class BookingService
 {
     private readonly IBarRepository _barRepository;
     private readonly IDeveloperRepository _developerRepository;
+    private readonly IBoatRepository _boatRepository;
     private readonly IBookingRepository _bookingRepository;
 
     public BookingService(
         IBarRepository barRepository,
         IDeveloperRepository devRepository,
+        IBoatRepository boatRepository,
         IBookingRepository bookingRepository)
     {
         _barRepository = barRepository;
         _developerRepository = devRepository;
+        _boatRepository = boatRepository;
         _bookingRepository = bookingRepository;
     }
 

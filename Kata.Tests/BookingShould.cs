@@ -138,7 +138,34 @@ public class BookingShould
         result.ShouldBeFalse();
     }
 
-    private static BookingController BuildController(BarData[] bars, DeveloperData[] developers)
+    [Fact(Skip = "Not implemented yet")]
+    public void Choose_boat_over_bar_when_available()
+    {
+        // Arrange
+        var barData = new[] { ABar() with { Open = new[] { DayOfWeek.Wednesday } } };
+        var devData = new DeveloperData[]
+        {
+            new() { Name = "Bob", OnSite = new[] { _wednesday } },
+            new() { Name = "Alice", OnSite = new[] { _wednesday } },
+        };
+        var boatName = "Péniche Ayers Rock";
+        var boatData = new BoatData[]
+            { new() { MaxPeople = 3, Name = boatName } };
+
+        // Act
+        var endpoint = BuildController(barData, devData, boatData);
+        endpoint.MakeBooking();
+        var booking = endpoint.Get().Single();
+
+        // Assert
+        booking.Date.ShouldBe(_wednesday);
+        booking.Bar.Name.ShouldBe(boatName);
+    }
+
+    private static BookingController BuildController(
+        BarData[] bars,
+        DeveloperData[] developers,
+        BoatData[]? boats = null)
     {
         var bookingRepository = new FakeBookingRepository();
 
@@ -146,6 +173,7 @@ public class BookingShould
             new BookingService(
                 new FakeBarRepository(bars),
                 new FakeDeveloperRepository(developers),
+                new FakeBoatRepository(boats ?? Array.Empty<BoatData>()),
                 bookingRepository),
             bookingRepository);
     }
