@@ -1,6 +1,6 @@
 ﻿using Kata.Api.Controllers;
 using Kata.BLL;
-using Kata.DAL.Models;
+using Kata.DAL.Data;
 using Shouldly;
 
 namespace Kata.Tests;
@@ -22,11 +22,11 @@ public class BookingShould
 
         var developers = new[]
         {
-            new Developer { Name = "Alice", OnSite = new[] { _wednesday, _thursday, _friday } },
-            new Developer { Name = "Bob", OnSite = new[] { _thursday } },
-            new Developer { Name = "Chad", OnSite = new[] { _friday } },
-            new Developer { Name = "Dan", OnSite = new[] { _wednesday, _thursday } },
-            new Developer { Name = "Eve", OnSite = new[] { _thursday } },
+            new DeveloperData { Name = "Alice", OnSite = new[] { _wednesday, _thursday, _friday } },
+            new DeveloperData { Name = "Bob", OnSite = new[] { _thursday } },
+            new DeveloperData { Name = "Chad", OnSite = new[] { _friday } },
+            new DeveloperData { Name = "Dan", OnSite = new[] { _wednesday, _thursday } },
+            new DeveloperData { Name = "Eve", OnSite = new[] { _thursday } },
         };
 
         // Act
@@ -50,11 +50,11 @@ public class BookingShould
 
         var developers = new[]
         {
-            new Developer { Name = "Alice", OnSite = new[] { _wednesday, _friday } },
-            new Developer { Name = "Bob", OnSite = new[] { _thursday } },
-            new Developer { Name = "Chad", OnSite = new[] { _friday } },
-            new Developer { Name = "Dan", OnSite = new[] { _wednesday } },
-            new Developer { Name = "Eve", OnSite = new[] { _thursday } }
+            new DeveloperData { Name = "Alice", OnSite = new[] { _wednesday, _friday } },
+            new DeveloperData { Name = "Bob", OnSite = new[] { _thursday } },
+            new DeveloperData { Name = "Chad", OnSite = new[] { _friday } },
+            new DeveloperData { Name = "Dan", OnSite = new[] { _wednesday } },
+            new DeveloperData { Name = "Eve", OnSite = new[] { _thursday } }
         };
 
         // Act
@@ -77,8 +77,8 @@ public class BookingShould
         };
         var developers = new[]
         {
-            new Developer { Name = "Bob", OnSite = new[] { _thursday } },
-            new Developer { Name = "Alice", OnSite = new[] { _thursday } }
+            new DeveloperData { Name = "Bob", OnSite = new[] { _thursday } },
+            new DeveloperData { Name = "Alice", OnSite = new[] { _thursday } }
         };
 
         // Act
@@ -102,8 +102,8 @@ public class BookingShould
         };
         var developers = new[]
         {
-            new Developer { Name = "Bob", OnSite = new[] { _wednesday } },
-            new Developer { Name = "Alice", OnSite = new[] { _wednesday } }
+            new DeveloperData { Name = "Bob", OnSite = new[] { _wednesday } },
+            new DeveloperData { Name = "Alice", OnSite = new[] { _wednesday } }
         };
 
         // Act
@@ -124,10 +124,10 @@ public class BookingShould
         };
         var developers = new[]
         {
-            new Developer { Name = "Bob", OnSite = new[] { _wednesday, _friday } },
-            new Developer { Name = "Chad", OnSite = new[] { _wednesday } },
-            new Developer { Name = "Dan", OnSite = new[] { _wednesday } },
-            new Developer { Name = "Eve", OnSite = new[] { _wednesday } },
+            new DeveloperData { Name = "Bob", OnSite = new[] { _wednesday, _friday } },
+            new DeveloperData { Name = "Chad", OnSite = new[] { _wednesday } },
+            new DeveloperData { Name = "Dan", OnSite = new[] { _wednesday } },
+            new DeveloperData { Name = "Eve", OnSite = new[] { _wednesday } },
         };
 
         // Act
@@ -138,7 +138,7 @@ public class BookingShould
         result.ShouldBeFalse();
     }
 
-    private static BookingController BuildController(Bar[] bars, Developer[] developers)
+    private static BookingController BuildController(BarData[] bars, DeveloperData[] developers)
     {
         var bookingRepository = new FakeBookingRepository();
 
@@ -150,7 +150,7 @@ public class BookingShould
             bookingRepository);
     }
 
-    private static Bar ABar() => new(
+    private static BarData ABar() => new(
         Name: "Les Etoiles",
         Capacity: 10,
         Open: new[] { DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday }

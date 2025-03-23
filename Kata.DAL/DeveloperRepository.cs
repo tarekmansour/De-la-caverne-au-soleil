@@ -1,14 +1,14 @@
 ﻿using System.Text.Json;
-using Kata.DAL.Models;
+using Kata.DAL.Data;
 
 namespace Kata.DAL;
 
 public class DeveloperRepository : IDeveloperRepository
 {
-    public IEnumerable<Developer> Get()
+    public IEnumerable<DeveloperData> Get()
     {
         var json = File.ReadAllText("../Kata.DAL/FakeData/developers.json");
-        var devs = JsonSerializer.Deserialize<IEnumerable<Developer>>(json);
+        var devs = JsonSerializer.Deserialize<IEnumerable<DeveloperData>>(json);
 
         return devs;
     }

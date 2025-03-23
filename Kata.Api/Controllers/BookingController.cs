@@ -1,6 +1,6 @@
 ﻿using Kata.BLL;
 using Kata.DAL;
-using Kata.DAL.Models;
+using Kata.DAL.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kata.Api.Controllers
@@ -25,7 +25,7 @@ namespace Kata.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Booking> Get()
+        public IEnumerable<BookingData> Get()
         {
             return _bookingRepository.GetUpcomingBookings();
         }

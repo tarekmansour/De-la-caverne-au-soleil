@@ -1,6 +1,6 @@
-﻿namespace Kata.DAL.Models;
+﻿namespace Kata.DAL.Data;
 
-public record Developer
+public record DeveloperData
 {
     public string Name { get; set; }
     public DateTime[] OnSite { get; set; }

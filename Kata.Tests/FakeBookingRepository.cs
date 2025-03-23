@@ -1,23 +1,23 @@
 ﻿using Kata.DAL;
-using Kata.DAL.Models;
+using Kata.DAL.Data;
 
 namespace Kata.Tests;
 
 public class FakeBookingRepository : IBookingRepository
 {
-    private readonly List<Booking> _bookings = new();
+    private readonly List<BookingData> _bookings = new();
 
-    public IEnumerable<Booking> GetUpcomingBookings()
+    public IEnumerable<BookingData> GetUpcomingBookings()
     {
         return _bookings;
     }
 
-    public Booking GetUpcomingBooking(DateTime date)
+    public BookingData GetUpcomingBooking(DateTime date)
     {
         return _bookings.First(b => b.Date == date);
     }
 
-    public void Save(Booking booking)
+    public void Save(BookingData booking)
     {
         _bookings.Add(booking);
     }

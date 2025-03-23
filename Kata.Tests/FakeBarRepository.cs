@@ -1,18 +1,18 @@
 ﻿using Kata.DAL;
-using Kata.DAL.Models;
+using Kata.DAL.Data;
 
 namespace Kata.Tests;
 
 public class FakeBarRepository : IBarRepository
 {
-    private readonly IEnumerable<Bar> _bars;
+    private readonly IEnumerable<BarData> _bars;
 
-    public FakeBarRepository(Bar[] bars)
+    public FakeBarRepository(BarData[] bars)
     {
         _bars = bars;
     }
 
-    public IEnumerable<Bar> Get()
+    public IEnumerable<BarData> Get()
     {
         return _bars;
     }

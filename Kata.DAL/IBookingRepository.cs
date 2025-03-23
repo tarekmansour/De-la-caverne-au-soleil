@@ -1,9 +1,9 @@
-﻿using Kata.DAL.Models;
+﻿using Kata.DAL.Data;
 
 namespace Kata.DAL;
 
 public interface IBookingRepository
 {
-    IEnumerable<Booking> GetUpcomingBookings();
-    void Save(Booking booking);
+    IEnumerable<BookingData> GetUpcomingBookings();
+    void Save(BookingData booking);
 }
