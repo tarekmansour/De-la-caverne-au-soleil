@@ -1,0 +1,31 @@
+{
+    "bars": [
+        {
+            "name": "Les Etoiles",
+            "capacity": 60,
+            "open": [
+                "Thursday",
+                "Friday",
+                "Saturday"
+            ]
+        },
+        {
+            "name": "Monsieur Antoine",
+            "capacity": 100,
+            "open": [
+                "Tuesday",
+                "Thursday",
+                "Friday",
+                "Saturday"
+            ]
+        },
+        {
+            "name": "Bar Ninkasi",
+            "capacity": 150,
+            "open": [
+                "Sunday",
+                "Monday"
+            ]
+        }
+    ]
+}
