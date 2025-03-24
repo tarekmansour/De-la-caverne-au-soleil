@@ -1,4 +1,4 @@
-﻿namespace Kata.DAL.Data;
+﻿namespace Kata.Infrastructure;
 
 public record DeveloperData
 {

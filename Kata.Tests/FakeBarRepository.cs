@@ -1,5 +1,4 @@
-﻿using Kata.DAL;
-using Kata.DAL.Data;
+﻿using Kata.Infrastructure;
 
 namespace Kata.Tests;
 

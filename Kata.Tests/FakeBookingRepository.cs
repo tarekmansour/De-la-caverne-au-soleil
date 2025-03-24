@@ -1,24 +1,23 @@
-﻿using Kata.DAL;
-using Kata.DAL.Data;
+﻿using Kata.Api.Controllers;
+using Kata.Domain;
+using Kata.Domain.Ports;
 
 namespace Kata.Tests;
 
-public class FakeBookingRepository : IBookingRepository
+public class FakeBookingRepository : ISaveBooking, IBookingQueryRepository
 {
-    private readonly List<BookingData> _bookings = new();
+    private readonly List<Booking> bookings = new();
 
-    public IEnumerable<BookingData> GetUpcomingBookings()
+    public void Save(Booking booking)
     {
-        return _bookings;
+        if (booking.GetType() != typeof(BookingNotFound))
+        {
+            bookings.Add(booking);
+        }
     }
 
-    public BookingData GetUpcomingBooking(DateTime date)
+    public IEnumerable<Booking> GetUpcomingBookings()
     {
-        return _bookings.First(b => b.Date == date);
-    }
-
-    public void Save(BookingData booking)
-    {
-        _bookings.Add(booking);
+        return bookings;
     }
 }

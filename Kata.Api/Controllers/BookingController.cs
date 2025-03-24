@@ -1,33 +1,32 @@
-﻿using Kata.BLL;
-using Kata.DAL;
-using Kata.DAL.Data;
+﻿using Kata.Domain;
+using Kata.Domain.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Kata.Api.Controllers
+namespace Kata.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class BookingController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BookingController : ControllerBase
+    private readonly MakeABooking _makeABooking;
+    private readonly IBookingQueryRepository bookingRepository;
+
+    public BookingController(MakeABooking makeABooking, IBookingQueryRepository bookingRepository)
     {
-        private readonly BookingService _bookingService;
-        private readonly IBookingRepository _bookingRepository;
+        this._makeABooking = makeABooking;
+        this.bookingRepository = bookingRepository;
+    }
 
-        public BookingController(BookingService bookingService, IBookingRepository bookingRepository)
-        {
-            _bookingService = bookingService;
-            _bookingRepository = bookingRepository;
-        }
+    [HttpPut]
+    public bool MakeBooking()
+    {
+        var booking = _makeABooking.Make();
+        return booking.GetType() != typeof(BookingNotFound);
+    }
 
-        [HttpPut]
-        public bool MakeBooking()
-        {
-            return _bookingService.ReserveBar();
-        }
-
-        [HttpGet]
-        public IEnumerable<BookingData> Get()
-        {
-            return _bookingRepository.GetUpcomingBookings();
-        }
+    [HttpGet]
+    public IEnumerable<Booking> Get()
+    {
+        return bookingRepository.GetUpcomingBookings();
     }
 }

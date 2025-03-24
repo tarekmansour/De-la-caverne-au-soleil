@@ -1,13 +1,21 @@
-﻿namespace Kata.BLL;
+﻿namespace Kata.Domain;
 
-public record BestDate(DateTime Date, int NumberOfDevsAvailable)
+public class DeveloperAvailabilities
 {
+    private readonly IEnumerable<DeveloperAvailability> availabilities;
+    private readonly int totalNumberOfDevelopers;
+
     private const double MinimumPercentageOfDevs = 0.6;
 
-    public static BestDate Get(List<DeveloperAvailability> devAvailabilities, int totalNumberOfDevelopers)
+    public DeveloperAvailabilities(IEnumerable<DeveloperAvailability> availabilities, int totalNumberOfDevelopers)
     {
-        var maximumOfDevsOnSite = devAvailabilities
-            .Select(devAvailability => devAvailability.NumberOfPeople.Value)
+        this.availabilities = availabilities;
+        this.totalNumberOfDevelopers = totalNumberOfDevelopers;
+    }
+
+    public BestDate SelectBestDate()
+    {
+        var maximumOfDevsOnSite = availabilities.Select(availability => availability.NumberOfPeople.Value)
             .Max();
 
         if (AMinimumOfDevIsNotAvailable(totalNumberOfDevelopers, maximumOfDevsOnSite))
@@ -15,13 +23,12 @@ public record BestDate(DateTime Date, int NumberOfDevsAvailable)
             return new DateNotFound();
         }
 
-        var favoriteDate = devAvailabilities
+        var favoriteDate = availabilities
             .First(devAvailability => devAvailability.NumberOfPeople == maximumOfDevsOnSite)
             .Date;
 
         return new BestDate(favoriteDate, maximumOfDevsOnSite);
     }
-
     private static bool AMinimumOfDevIsNotAvailable(int totalNumberOfDevelopers, int maxNumberOfDevsAvailable)
     {
         return maxNumberOfDevsAvailable <= totalNumberOfDevelopers * MinimumPercentageOfDevs;

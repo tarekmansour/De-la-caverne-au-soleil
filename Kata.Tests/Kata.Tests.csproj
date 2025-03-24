@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Kata.Api\Kata.Api.csproj" />
+    <ProjectReference Include="..\Kata.Infrastructure\Kata.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

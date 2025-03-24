@@ -1,6 +1,7 @@
 ﻿using Kata.Api.Controllers;
-using Kata.BLL;
-using Kata.DAL.Data;
+using Kata.Domain.UseCases;
+using Kata.Infrastructure;
+using Kata.Infrastructure.Adapters;
 using Shouldly;
 
 namespace Kata.Tests;
@@ -36,7 +37,7 @@ public class BookingShould
 
         // Assert
         result.Date.ShouldBe(_thursday);
-        result.Bar.Name.ShouldBe(indoorBarName);
+        result.Bar.Name.Value.ShouldBe(indoorBarName);
     }
 
     [Fact]
@@ -88,7 +89,7 @@ public class BookingShould
 
         // Assert
         result.Date.ShouldBe(_thursday);
-        result.Bar.Name.ShouldBe(indoorBarName);
+        result.Bar.Name.Value.ShouldBe(indoorBarName);
     }
 
     [Fact]
@@ -159,23 +160,69 @@ public class BookingShould
 
         // Assert
         booking.Date.ShouldBe(_wednesday);
-        booking.Bar.Name.ShouldBe(boatName);
+        booking.Bar.Name.Value.ShouldBe(boatName);
+    }
+
+    [Fact(Skip = "Not implemented yet")]
+    public void Do_not_choose_bar_when_available_devs_fill_more_than_80_percent_of_bar_capacity()
+    {
+        // Arrange
+        var indoorBars = new[]
+        {
+            ABar() with { Capacity = 3 }
+        };
+        var developers = new[]
+        {
+            new DeveloperData { Name = "Bob", OnSite = new[] { _wednesday, _friday } },
+            new DeveloperData { Name = "Chad", OnSite = new[] { _wednesday } },
+            new DeveloperData { Name = "Dan", OnSite = new[] { _wednesday } }
+            };
+
+        // Act
+        var controller = BuildController(indoorBars, developers);
+        var result = controller.MakeBooking();
+
+        // Assert
+        result.ShouldBeFalse();
+    }
+
+    [Fact(Skip = "Not implemented yet")]
+    public void Choose_rooftop_when_available()
+    {
+        // Arrange
+        var devData = new DeveloperData[]
+        {
+                new() { Name = "Bob", OnSite = new[] { _wednesday } },
+                new() { Name = "Alice", OnSite = new[] { _wednesday } },
+        };
+        var rooftopName = "Rooftop Le Sucre";
+        var rootopData = new RooftopData[] { new(5, rooftopName, new[] { DayOfWeek.Wednesday }) };
+
+        // Act
+        var endpoint = BuildController(Array.Empty<BarData>(), devData, Array.Empty<BoatData>(), rootopData);
+        endpoint.MakeBooking();
+        var booking = endpoint.Get().Single();
+
+        // Assert
+        booking.Date.ShouldBe(_wednesday);
+        booking.Bar.Name.Value.ShouldBe(rooftopName);
     }
 
     private static BookingController BuildController(
         BarData[] bars,
         DeveloperData[] developers,
-        BoatData[]? boats = null)
+        BoatData[]? boats = null,
+        RooftopData[]? rooftops = null)
     {
         var bookingRepository = new FakeBookingRepository();
 
-        return new BookingController(
-            new BookingService(
-                new FakeBarRepository(bars),
-                new FakeDeveloperRepository(developers),
-                new FakeBoatRepository(boats ?? Array.Empty<BoatData>()),
-                bookingRepository),
-            bookingRepository);
+        return new BookingController(new MakeABooking(new BarAdapter(
+                    new FakeBarRepository(bars),
+                    new FakeBoatRepository(boats ?? Array.Empty<BoatData>()),
+                    new FakeRooftopRepository(rooftops ?? Array.Empty<RooftopData>())),
+                    new DevelopersAvailabilitiesAdapter(new FakeDeveloperRepository(developers)),
+                    bookingRepository),
+                bookingRepository);
     }
 
     private static BarData ABar() => new(

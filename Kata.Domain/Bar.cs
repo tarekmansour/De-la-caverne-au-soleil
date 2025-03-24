@@ -1,4 +1,4 @@
-﻿namespace Kata.BLL;
+﻿namespace Kata.Domain;
 
 public record Bar(BarName Name, Capacity Capacity, DayOfWeek[] OpenDays, bool IsFavorite)
 {

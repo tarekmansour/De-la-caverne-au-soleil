@@ -1,5 +1,5 @@
-using Kata.BLL;
-using Kata.DAL;
+using Kata.Domain.UseCases;
+using Kata.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IBarRepository, BarRepository>()
                 .AddScoped<IDeveloperRepository, DeveloperRepository>()
-                .AddScoped<BookingService>();
+                .AddScoped<MakeABooking>();
 
 var app = builder.Build();
 

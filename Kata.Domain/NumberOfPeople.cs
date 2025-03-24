@@ -1,4 +1,4 @@
-﻿namespace Kata.BLL;
+﻿namespace Kata.Domain;
 
 public record NumberOfPeople(int Value)
 {

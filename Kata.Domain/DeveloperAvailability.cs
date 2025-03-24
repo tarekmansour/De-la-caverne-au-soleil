@@ -1,3 +1,3 @@
-﻿namespace Kata.BLL;
+﻿namespace Kata.Domain;
 
 public record DeveloperAvailability(DateTime Date, NumberOfPeople NumberOfPeople);
